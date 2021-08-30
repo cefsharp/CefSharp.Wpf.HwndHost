@@ -1130,10 +1130,10 @@ namespace CefSharp.Wpf.HwndHost
         /// <param name="newValue">if set to <c>true</c> [new value].</param>
         protected virtual void OnIsBrowserInitializedChanged(bool oldValue, bool newValue)
         {
+            IsBrowserInitializedChanged?.Invoke(this, EventArgs.Empty);
+
             if (newValue && !IsDisposed)
             {
-                IsBrowserInitializedChanged?.Invoke(this, EventArgs.Empty);
-
                 var task = this.GetZoomLevelAsync();
                 task.ContinueWith(previous =>
                 {
