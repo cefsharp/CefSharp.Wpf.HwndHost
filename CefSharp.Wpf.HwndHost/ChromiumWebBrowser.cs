@@ -617,6 +617,7 @@ namespace CefSharp.Wpf.HwndHost
 
             WebBrowser = this;
 
+            Loaded += OnLoaded;
             SizeChanged += OnSizeChanged;
             IsVisibleChanged += OnIsVisibleChanged;
 
@@ -694,6 +695,14 @@ namespace CefSharp.Wpf.HwndHost
         private void OnSizeChanged(object sender, SizeChangedEventArgs e)
         {
             ResizeBrowser((int)e.NewSize.Width, (int)e.NewSize.Height);
+        }
+
+        private void OnLoaded(object sender, RoutedEventArgs e)
+        {
+            if (CleanupElement == null)
+            {
+                CleanupElement = Window.GetWindow(this);
+            }
         }
 
         ///<inheritdoc/>
@@ -843,6 +852,7 @@ namespace CefSharp.Wpf.HwndHost
 
             if (disposing)
             {
+                Loaded -= OnLoaded;
                 SizeChanged -= OnSizeChanged;
                 IsVisibleChanged -= OnIsVisibleChanged;
 
@@ -897,6 +907,11 @@ namespace CefSharp.Wpf.HwndHost
                 RenderProcessMessageHandler = null;
 
                 browser = null;
+
+                if (CleanupElement != null)
+                {
+                    CleanupElement.Unloaded -= OnCleanupElementUnloaded;
+                }
 
                 managedCefBrowserAdapter?.Dispose();
                 managedCefBrowserAdapter = null;
@@ -1332,6 +1347,70 @@ namespace CefSharp.Wpf.HwndHost
         /// </summary>
         public static readonly DependencyProperty ZoomLevelIncrementProperty =
             DependencyProperty.Register(nameof(ZoomLevelIncrement), typeof(double), typeof(ChromiumWebBrowser), new PropertyMetadata(0.10));
+
+        /// <summary>
+        /// The CleanupElement Controls when the BrowserResources will be cleaned up.
+        /// The ChromiumWebBrowser will register on Unloaded of the provided Element and dispose all resources when that handler is called.
+        /// By default the cleanup element is the Window that contains the ChromiumWebBrowser.
+        /// if you want cleanup to happen earlier provide another FrameworkElement.
+        /// Be aware that this Control is not usable anymore after cleanup is done.
+        /// </summary>
+        /// <value>The cleanup element.</value>
+        public FrameworkElement CleanupElement
+        {
+            get { return (FrameworkElement)GetValue(CleanupElementProperty); }
+            set { SetValue(CleanupElementProperty, value); }
+        }
+
+        /// <summary>
+        /// The cleanup element property
+        /// </summary>
+        public static readonly DependencyProperty CleanupElementProperty =
+            DependencyProperty.Register(nameof(CleanupElement), typeof(FrameworkElement), typeof(ChromiumWebBrowser), new PropertyMetadata(null, OnCleanupElementChanged));
+
+        /// <summary>
+        /// Handles the <see cref="E:CleanupElementChanged" /> event.
+        /// </summary>
+        /// <param name="sender">The sender.</param>
+        /// <param name="args">The <see cref="DependencyPropertyChangedEventArgs"/> instance containing the event data.</param>
+        private static void OnCleanupElementChanged(DependencyObject sender, DependencyPropertyChangedEventArgs args)
+        {
+            var owner = (ChromiumWebBrowser)sender;
+            var oldValue = (FrameworkElement)args.OldValue;
+            var newValue = (FrameworkElement)args.NewValue;
+
+            owner.OnCleanupElementChanged(oldValue, newValue);
+        }
+
+        /// <summary>
+        /// Called when [cleanup element changed].
+        /// </summary>
+        /// <param name="oldValue">The old value.</param>
+        /// <param name="newValue">The new value.</param>
+        protected virtual void OnCleanupElementChanged(FrameworkElement oldValue, FrameworkElement newValue)
+        {
+            if (oldValue != null)
+            {
+                oldValue.Unloaded -= OnCleanupElementUnloaded;
+            }
+
+            if (newValue != null)
+            {
+                newValue.Unloaded -= OnCleanupElementUnloaded;
+                newValue.Unloaded += OnCleanupElementUnloaded;
+            }
+        }
+
+
+        /// <summary>
+        /// Handles the <see cref="E:CleanupElementUnloaded" /> event.
+        /// </summary>
+        /// <param name="sender">The sender.</param>
+        /// <param name="e">The <see cref="RoutedEventArgs"/> instance containing the event data.</param>
+        private void OnCleanupElementUnloaded(object sender, RoutedEventArgs e)
+        {
+            Dispose();
+        }
 
         /// <summary>
         /// The text that will be displayed as a ToolTip
