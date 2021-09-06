@@ -617,7 +617,6 @@ namespace CefSharp.Wpf.HwndHost
 
             WebBrowser = this;
 
-            Loaded += OnLoaded;
             SizeChanged += OnSizeChanged;
             IsVisibleChanged += OnIsVisibleChanged;
 
@@ -666,6 +665,12 @@ namespace CefSharp.Wpf.HwndHost
                     window.StateChanged += OnWindowStateChanged;
                     window.LocationChanged += OnWindowLocationChanged;
                     sourceWindow = window;
+
+                    // If CleanupElement is null, set the CleanupElement to the new window that the browser is moved in.
+                    if (CleanupElement == null)
+                    {
+                        CleanupElement = window;
+                    }
                 }
             }
             else if (args.OldSource != null)
@@ -677,6 +682,12 @@ namespace CefSharp.Wpf.HwndHost
                     window.StateChanged -= OnWindowStateChanged;
                     window.LocationChanged -= OnWindowLocationChanged;
                     sourceWindow = null;
+
+                    // If CleanupElement is the old Window that the browser is moved out of, set CleanupElement to null.
+                    if (CleanupElement == window)
+                    {
+                        CleanupElement = null;
+                    }
                 }
             }
         }
@@ -695,14 +706,6 @@ namespace CefSharp.Wpf.HwndHost
         private void OnSizeChanged(object sender, SizeChangedEventArgs e)
         {
             ResizeBrowser((int)e.NewSize.Width, (int)e.NewSize.Height);
-        }
-
-        private void OnLoaded(object sender, RoutedEventArgs e)
-        {
-            if (CleanupElement == null)
-            {
-                CleanupElement = Window.GetWindow(this);
-            }
         }
 
         ///<inheritdoc/>
@@ -852,7 +855,6 @@ namespace CefSharp.Wpf.HwndHost
 
             if (disposing)
             {
-                Loaded -= OnLoaded;
                 SizeChanged -= OnSizeChanged;
                 IsVisibleChanged -= OnIsVisibleChanged;
 
