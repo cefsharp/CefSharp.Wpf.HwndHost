@@ -1396,7 +1396,6 @@ namespace CefSharp.Wpf.HwndHost
 
             if (newValue != null)
             {
-                newValue.Unloaded -= OnCleanupElementUnloaded;
                 newValue.Unloaded += OnCleanupElementUnloaded;
             }
         }
