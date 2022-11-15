@@ -43,7 +43,7 @@ namespace CefSharp.Wpf.HwndHost.Example
 
             //See https://github.com/cefsharp/CefSharp/wiki/General-Usage#multithreadedmessageloop
             //The default is true
-            const bool multiThreadedMessageLoop = true;
+            const bool multiThreadedMessageLoop = false;
 
             IBrowserProcessHandler browserProcessHandler = null;
 
