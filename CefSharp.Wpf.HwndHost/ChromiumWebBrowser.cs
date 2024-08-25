@@ -1707,6 +1707,25 @@ namespace CefSharp.Wpf.HwndHost
             return browser;
         }
 
+        private const string CefInitializeFailedErrorMessage = "Cef.Initialize() failed.Check the log file see https://github.com/cefsharp/CefSharp/wiki/Trouble-Shooting#log-file for details.";
+        private const string CefIsInitializedFalseErrorMessage = "Cef.IsInitialized was false!.Check the log file for errors!. See https://github.com/cefsharp/CefSharp/wiki/Trouble-Shooting#log-file for details.";
+
+        private static void InitializeCefInternal()
+        {
+            if (Cef.IsInitialized == null)
+            {
+                if (!Cef.Initialize(new CefSettings()))
+                {
+                    throw new InvalidOperationException(CefInitializeFailedErrorMessage);
+                }
+            }
+
+            if (Cef.IsInitialized == false)
+            {
+                throw new InvalidOperationException(CefIsInitializedFalseErrorMessage);
+            }
+        }
+
         /// <summary>
         /// Check is browserisinitialized
         /// </summary>
