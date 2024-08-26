@@ -31,6 +31,8 @@ namespace CefSharp.Wpf.HwndHost
             "The ChromiumWebBrowser instance creates the underlying Chromium Embedded Framework (CEF) browser instance in an async fashion. " +
             "The undelying CefBrowser instance is not yet initialized. Use the IsBrowserInitializedChanged event and check " +
             "the IsBrowserInitialized property to determine when the browser has been initialized.";
+        private const string CefInitializeFailedErrorMessage = "Cef.Initialize() failed.Check the log file see https://github.com/cefsharp/CefSharp/wiki/Trouble-Shooting#log-file for details.";
+        private const string CefIsInitializedFalseErrorMessage = "Cef.IsInitialized was false!.Check the log file for errors!. See https://github.com/cefsharp/CefSharp/wiki/Trouble-Shooting#log-file for details.";
 
         [DllImport("user32.dll", EntryPoint = "CreateWindowEx", CharSet = CharSet.Unicode)]
         private static extern IntPtr CreateWindowEx(int dwExStyle,
@@ -1706,9 +1708,6 @@ namespace CefSharp.Wpf.HwndHost
         {
             return browser;
         }
-
-        private const string CefInitializeFailedErrorMessage = "Cef.Initialize() failed.Check the log file see https://github.com/cefsharp/CefSharp/wiki/Trouble-Shooting#log-file for details.";
-        private const string CefIsInitializedFalseErrorMessage = "Cef.IsInitialized was false!.Check the log file for errors!. See https://github.com/cefsharp/CefSharp/wiki/Trouble-Shooting#log-file for details.";
 
         private static void InitializeCefInternal()
         {
