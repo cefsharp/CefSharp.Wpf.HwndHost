@@ -1,9 +1,9 @@
+### Source Moved
+The source for this project has been merged into the main [CefSharp](https://github.com/cefsharp/CefSharp) repository. This repo is now readonly.
 
 [![CefSharp Logo](https://github.com/cefsharp/CefSharp/raw/master/logo.png)](https://cefsharp.github.io/ "CefSharp - Embedded Chromium for .NET")
 
 # CefSharp.Wpf.HwndHost
-
-The source for this project has been merged into the main [CefSharp](https://github.com/cefsharp/CefSharp) repository. This repo is now readonly.
 
 [![CefSharp.Wpf.HwndHost Build Status](https://img.shields.io/appveyor/build/cefsharp/cefsharp-wpf-hwndhost)](https://ci.appveyor.com/project/cefsharp/cefsharp-wpf-hwndhost)
 [![CefSharp.Wpf](https://img.shields.io/nuget/v/CefSharp.Wpf.HwndHost.svg?style=flat&label=CefSharp.Wpf.HwndHost)](https://www.nuget.org/packages/CefSharp.Wpf.HwndHost/)
